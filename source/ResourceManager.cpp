@@ -4,7 +4,7 @@
 #include <iostream>
 
 ResourceManager::ResourceManager(){
-
+	textureList.push_back(0);
 }
 
 void ResourceManager::loadTexture(const std::string &path){

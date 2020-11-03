@@ -1,1 +1,1 @@
-g++ -g -std=c++11 -o nickcraft ./source/main.cpp ./source/World.cpp ./source/Game.cpp ./source/Camera.cpp ./source/Shader.cpp ./source/Mesh.cpp ./source/ResourceManager.cpp ./source/glad.c ./source/stb_image.cpp -Llib -lglfw3 -lGL -lX11 -lpthread -lXrandr -lXi -ldl -Iinclude
+g++ -g -std=c++11 -o nickcraft ./source/main.cpp ./source/Chunk.cpp ./source/Game.cpp ./source/Camera.cpp ./source/Shader.cpp ./source/Face.cpp ./source/ResourceManager.cpp ./source/Chunkmesh.cpp ./source/glad.c ./source/stb_image.cpp -Llib -lglfw3 -lGL -lX11 -lpthread -lXrandr -lXi -ldl -Iinclude

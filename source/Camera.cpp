@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include <iostream>
+#include <iomanip>
 
 void Camera::init(const glm::vec3 &pos, const int &viewLoc, float *deltaTime){
 	this->viewLoc = viewLoc;
@@ -15,7 +16,7 @@ void Camera::init(const glm::vec3 &pos, const int &viewLoc, float *deltaTime){
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
 	this->deltaTime = deltaTime;
-	speed = 7.5f;
+	speed = 20.0f;
 
 	pitch = 0.0f;
 	yaw = 0.0f;
@@ -84,7 +85,7 @@ void Camera::update(){
 	position += direction.y*normal;
 	position += direction.z*tangent;
 
-	std::cout << position.x << ' ' << position.y << ' ' << position.z << '\n';
+	std::cout << std::setprecision(2) << position.x << ' ' << position.y << ' ' << position.z << '\n';
 
 	view = glm::lookAt(position, position + tangent, normal);
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));

@@ -4,12 +4,10 @@
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 
-#include <vector>
-
-#include "World.h"
+#include "Chunk.h"
 #include "ResourceManager.h"
 #include "Shader.h"
-#include "Mesh.h"
+#include "Face.h"
 #include "Camera.h"
 
 const unsigned int SCR_WIDTH = 1024;
@@ -18,7 +16,6 @@ const unsigned int SCR_HEIGHT = 768;
 class Game{
 	public:
 		Game();
-		~Game();
 
 		void load();
 		void update();
@@ -30,8 +27,8 @@ class Game{
 		Shader shader;
 		ResourceManager manager;
 		Camera camera;
-		Mesh *mesh;
-		World world;
+		Face face;
+		Chunk chunk;
 
 		glm::mat4 projection;
 		unsigned int projectionLoc;

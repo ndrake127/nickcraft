@@ -1,5 +1,6 @@
 #include "Game.h"
 #include <iostream>
+#include <iomanip>
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
@@ -35,7 +36,8 @@ Game::Game(){
 
 	// this just makes things work
 	glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_CULL_FACE);  
+	glEnable(GL_CULL_FACE);  
+	glFrontFace(GL_CW);  	
 	//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
 	// locks cursor to center of screen, enables raw mouse motion
@@ -46,14 +48,8 @@ Game::Game(){
 	currentFrame = 0.0f;
 	lastFrame = 0.0f;
 
-	mesh = new Mesh;
-
 	// keeps track of when to end the game loop in main
 	close = false;
-}
-
-Game::~Game(){
-	delete mesh;
 }
 
 void Game::load(){
@@ -61,9 +57,8 @@ void Game::load(){
 	projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH/(float)SCR_HEIGHT, 0.1f, 100.0f);
 	projectionLoc = glGetUniformLocation(shader.getID(), "projection");
 
-	shader.use();	
-	world.load(&manager, mesh, glGetUniformLocation(shader.getID(), "model"));
-	
+	shader.use();
+
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 	
 	camera.init(glm::vec3(0.0f, 0.0f, -3.0f), glGetUniformLocation(shader.getID(), "view"), &deltaTime);
@@ -72,21 +67,23 @@ void Game::load(){
 	manager.loadTexture("textures/dirt.png");
 	manager.loadTexture("textures/stone.png");
 	manager.loadTexture("textures/plank.png");
+	
+	chunk.load(&manager, &face, &shader, glGetUniformLocation(shader.getID(), "model"));
 }
 
 void Game::update(){
 	currentFrame = glfwGetTime();
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
+	std::cout << std::setprecision(4) << 1.0f/deltaTime << '\n';
 
-	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	glClearColor(0.45f, 0.74f, 0.8f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// render here
 	shader.use();
 	camera.update();
-	world.draw();
-	//glBindTexture(GL_TEXTURE_2D, manager.getTexture(0));
+	chunk.draw();
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();
