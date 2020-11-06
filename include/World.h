@@ -7,22 +7,28 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "ResourceManager.h"
-#include "Mesh.h"
+#include <vector>
+
+class Chunk;
+class Face;
+class Shader;
 
 class World{
 	public:
-		void load(ResourceManager *manager, Mesh *mesh, int modelLoc);
-		void draw() const;
-	
-		int modelLoc;
+		World();
+
+		void init(Face *face, Shader *shader, int modelLoc);
+
+		unsigned char getBlock(int x, int y, int z) const;
+
+		void draw();
 	private:
-		char list[16][16][16];
-
-		ResourceManager *manager;
-		Mesh *mesh;
-
-		void drawBlock(char id) const;
+		Face *face;
+		Shader *shader;
+		int modelLoc;
+		
+		std::vector<std::vector<Chunk> > loadedChunks;
+		int radius;
 };
 
 #endif

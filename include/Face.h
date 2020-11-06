@@ -10,7 +10,7 @@
 
 #include "Chunkmesh.h"
 
-enum faceDirection {SOUTH=0, EAST, NORTH, WEST, BLOCKUP, BLOCKDOWN};
+enum faceDirection {SOUTH=0, EAST, NORTH, WEST, BLOCKDOWN, BLOCKUP};
 
 class Face{
 	public:

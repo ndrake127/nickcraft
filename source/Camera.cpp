@@ -7,7 +7,7 @@ void Camera::init(const glm::vec3 &pos, const int &viewLoc, float *deltaTime){
 	
 	view = glm::mat4(1.0f);
 
-	position = glm::vec3(0.0f, 0.0f, 3.0f);
+	position = glm::vec3(0.0f, 70.0f, 0.0f);
 	tangent = glm::vec3(0.0f, 0.0f, -1.0f);
 	normal = glm::vec3(0.0f, 1.0f, 0.0f);
 	binormal = glm::vec3(1.0f, 0.0f, 0.0f);

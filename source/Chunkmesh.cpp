@@ -21,6 +21,8 @@ void Chunkmesh::setupMesh(){
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(1, 2, GL_BYTE, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, textureCoord));
         glEnableVertexAttribArray(1);
+        glVertexAttribPointer(2, 1, GL_BYTE, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, id));
+        glEnableVertexAttribArray(2);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
@@ -37,30 +39,13 @@ void Chunkmesh::pushFace(vertex *vertices, unsigned char id){
 
 void Chunkmesh::sort(){
 	std::sort( vertices.begin(), vertices.end(), []( const face &left, const face &right ){ return ( left.vertices[0].id < right.vertices[0].id ); } );
-	unsigned char prev = vertices.at(0).vertices[0].id;
-	textures.push_back(prev);
-	toRender.push_back(1);
-	for(unsigned int i = 1; i < vertices.size(); i++){
-		unsigned char curr = vertices.at(i).vertices[0].id;
-		if(curr != prev){
-			textures.push_back((unsigned int)curr);
-			toRender.push_back(1);
-			prev = curr;
-			continue;
-		}
-		toRender.back()++;
-	}
 }
 
 void Chunkmesh::draw() const {
 	glBindVertexArray(VAO);
 	unsigned int rendered = 0;
 
-	for(unsigned int i = 0; i < textures.size(); i++){
-		glBindTexture(GL_TEXTURE_2D, textures.at(i));
-		glDrawArrays(GL_TRIANGLES, rendered, toRender.at(i)*6);
-		rendered += toRender.at(i)*6;
-	}
+	glDrawArrays(GL_TRIANGLES, 0, vertices.size()*6);
 	
 	glBindVertexArray(0);
 }

@@ -54,21 +54,19 @@ Game::Game(){
 
 void Game::load(){
 	shader.load("Shaders/shader.vs", "Shaders/shader.fs");
-	projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH/(float)SCR_HEIGHT, 0.1f, 100.0f);
-	projectionLoc = glGetUniformLocation(shader.getID(), "projection");
-
 	shader.use();
-
+	
+	projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH/(float)SCR_HEIGHT, 0.1f, 1000.0f);
+	projectionLoc = glGetUniformLocation(shader.getID(), "projection");
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 	
 	camera.init(glm::vec3(0.0f, 0.0f, -3.0f), glGetUniformLocation(shader.getID(), "view"), &deltaTime);
 
-	manager.loadTexture("textures/grasstop.png");
-	manager.loadTexture("textures/dirt.png");
-	manager.loadTexture("textures/stone.png");
-	manager.loadTexture("textures/plank.png");
-	
-	chunk.load(&manager, &face, &shader, glGetUniformLocation(shader.getID(), "model"));
+	manager.loadTexture("textures/atlas.png");
+	manager.setTexture();
+
+	world.init(&face, &shader, glGetUniformLocation(shader.getID(), "model"));
+	std::cout << "init done\n";
 }
 
 void Game::update(){
@@ -83,7 +81,7 @@ void Game::update(){
 	// render here
 	shader.use();
 	camera.update();
-	chunk.draw();
+	world.draw();
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();

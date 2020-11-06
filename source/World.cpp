@@ -1,39 +1,75 @@
 #include "World.h"
-#include <iostream>
-#include <glm/gtx/string_cast.hpp>
+#include "Chunk.h"
+#include "Face.h"
+#include "Shader.h"
 
-void World::load(ResourceManager *manager, Mesh *mesh, int modelLoc){
-	this->manager = manager;
-	this->mesh = mesh;
+World::World(){
+	face = nullptr;
+	shader = nullptr;
+	radius = 0;
+}
+
+void World::init(Face *face, Shader *shader, int modelLoc){
+	this->face = face;
+	this->shader = shader;
 	this->modelLoc = modelLoc;
+	radius = 20;
+	loadedChunks.resize(2*radius-1, std::vector<Chunk>(2*radius-1));
 
-	for(int i = 0; i < 16; i++){
-		for(int j = 0; j < 16; j++){
-			for(int k = 0; k < 16; k++){
-				list[i][j][k] = j/4;
-				if(j < 12) list[i][j][k] = 2;
-				else if(j >= 12 && j < 15) list[i][j][k] = 1;
-				else list[i][j][k] = 0;
-			}
+	for(int x = 0; x < 2*radius-1; x++){
+		for(int z = 0; z < 2*radius-1; z++){
+			loadedChunks[x][z] = Chunk(x-radius+1, z-radius+1);
+			loadedChunks[x][z].init(face, shader, this, glGetUniformLocation(shader->getID(), "model"));
+			std::cout << x-radius+1 << ' ' << z-radius+1 << '\n';
+		}
+	}
+
+	for(unsigned int i = 0; i < loadedChunks.size(); i++){
+		for(unsigned int j = 0; j < loadedChunks.at(0).size(); j++){
+			std::cout << i << ' ' << j << '\n';
+			loadedChunks[i][j].makeChunkmesh();
 		}
 	}
 }
 
-void World::draw() const {
-	for(int i = 0; i < 16; i++){
-		for(int j = 0; j < 16; j++){
-			for(int k = 0; k < 16; k++){
-				glm::mat4 model(1.0f);
-				model = glm::translate(model, glm::vec3((float)i, (float)j, (float)k));
-				glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-				
-				drawBlock(list[i][j][k]);
-			}
+void World::draw(){
+	for(unsigned int i = 0; i < loadedChunks.size(); i++){
+		for(unsigned int j = 0; j < loadedChunks.at(0).size(); j++){
+			loadedChunks[i][j].draw();
 		}
 	}
 }
 
-void World::drawBlock(char id) const {
-	glBindTexture(GL_TEXTURE_2D, manager->getTexture(id));
-	mesh->draw();
+unsigned char World::getBlock(int x, int y, int z) const {
+	int chunkX;
+	int chunkZ;
+	int blockX;
+	int blockY = y;
+	int blockZ;
+	
+	if(x < 0){
+		chunkX = (x+1)/16-1;
+		blockX = 16-z%16;
+	}
+	if(z < 0){
+		chunkZ = (z+1)/16-1;
+		blockZ = 16-z%16;
+	}
+	if(x >= 0){
+		chunkX = x/16;
+		blockX = x%16;
+	}
+	if(z >= 0){
+		chunkZ = z/16;
+		blockZ = z%16;
+	}
+	blockX = x - (16*chunkX);
+	blockZ = z - (16*chunkZ);
+
+	int xIndex = chunkX - loadedChunks[0][0].getX();
+	int zIndex = chunkZ - loadedChunks[0][0].getZ();
+
+	if(xIndex < 0 || zIndex < 0 || xIndex >= loadedChunks.size() || zIndex >= loadedChunks[0].size()) return 0;
+
+	return loadedChunks[xIndex][zIndex].getBlock(blockX, blockY, blockZ);
 }

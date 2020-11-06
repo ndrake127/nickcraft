@@ -9,9 +9,11 @@
 #include "Shader.h"
 #include "Face.h"
 #include "Camera.h"
+#include "World.h"
+#include "TerrainGenerator.h"
 
-const unsigned int SCR_WIDTH = 1024;
-const unsigned int SCR_HEIGHT = 768;
+const unsigned int SCR_WIDTH = 1680;
+const unsigned int SCR_HEIGHT = 1050;
 
 class Game{
 	public:
@@ -28,7 +30,7 @@ class Game{
 		ResourceManager manager;
 		Camera camera;
 		Face face;
-		Chunk chunk;
+		World world;
 
 		glm::mat4 projection;
 		unsigned int projectionLoc;

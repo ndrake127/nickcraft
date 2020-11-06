@@ -11,28 +11,52 @@
 #include "Face.h"
 #include "Chunkmesh.h"
 
+#include <sstream>
+#include <fstream>
+#include <string>
+
 const unsigned int WIDTH = 16;
 const unsigned int LENGTH = 16;
 const unsigned int HEIGHT = 256;
 
+class World;
+
 class Chunk{
 	public:
-		void load(ResourceManager *manager, Face *face, Shader *shader, int modelLoc);
-		void translate(glm::vec3 position);
+		Chunk();
+		Chunk(int x, int z);
+
+		void init(Face *face, Shader *shader, World *world, int modelLoc);
+		
+		void setChunkPos(int x, int z);
+		const int & getX() const;
+		const int & getZ() const;
+		unsigned char getBlock(int x, int y, int z) const;
+
+		void generate();
+		void load(std::string path);
+		void save();
 
 		void calculateVisible();
 		void makeChunkmesh();
 
 		void draw();
 	private:
-		unsigned short list[WIDTH][HEIGHT][LENGTH];
+		std::string path;
+		bool dirty = true;
+
+		unsigned short list[WIDTH][HEIGHT][LENGTH];	
+		int x, z;
+		int blocks;
+
 		glm::mat4 model = glm::mat4(1.0f);
 		int modelLoc;
+		
 		Chunkmesh mesh;
 
-		ResourceManager *manager;
 		Face *face;
 		Shader *shader;
+		World *world;
 };
 
 #endif

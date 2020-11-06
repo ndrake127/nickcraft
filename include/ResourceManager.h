@@ -11,10 +11,10 @@ class ResourceManager{
 
 		// texture management
 		void loadTexture(const std::string &path);
-		const unsigned int& getTexture(int id) const;
+		void setTexture() const;
 
 	private:
-		std::vector<unsigned int> textureList;
+		unsigned int textureID;
 };
 
 #endif

@@ -32,8 +32,6 @@ class Chunkmesh{
 		void draw() const;
 	
 		std::vector<face> vertices;
-		std::vector<unsigned int> toRender;
-		std::vector<unsigned int> textures;
 	private:
 		Shader *shader;
 		
