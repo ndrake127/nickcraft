@@ -23,6 +23,9 @@ struct face{
 
 class Chunkmesh{
 	public:
+		Chunkmesh();
+		~Chunkmesh();
+
 		void setShader(Shader *shader);
 		
 		void setupMesh();

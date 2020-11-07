@@ -10,21 +10,33 @@ void Camera::init(const glm::vec3 &pos, const int &viewLoc, float *deltaTime){
 	position = glm::vec3(0.0f, 70.0f, 0.0f);
 	tangent = glm::vec3(0.0f, 0.0f, -1.0f);
 	normal = glm::vec3(0.0f, 1.0f, 0.0f);
-	binormal = glm::vec3(1.0f, 0.0f, 0.0f);
+	binormal = glm::vec3(-1.0f, 0.0f, 0.0f);
 	
 	view = glm::lookAt(position, position + tangent, normal);
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
 	this->deltaTime = deltaTime;
-	speed = 20.0f;
+	speed = 25.0f;
 
 	pitch = 0.0f;
 	yaw = 0.0f;
 	setRot = false;
 }
 
+int Camera::getX() const {
+	return position.x;
+}
+
+int Camera::getZ() const {
+	return position.z;
+}
+
 void Camera::set(Direction dir){
 	dirArr[dir] = !dirArr[dir];
+}
+
+void Camera::sprint(){
+	fast = !fast;
 }
 
 void Camera::rotate(double x, double y){
@@ -80,12 +92,13 @@ void Camera::update(){
 
 	direction = glm::normalize(direction);
 	direction *= speed * *deltaTime;
+	if(fast) direction *= 10;
 
 	position -= direction.x*binormal;
 	position += direction.y*normal;
 	position += direction.z*tangent;
 
-	std::cout << std::setprecision(2) << position.x << ' ' << position.y << ' ' << position.z << '\n';
+	//std::cout << std::setprecision(3) << position.x << ' ' << position.y << ' ' << position.z << '\n';
 
 	view = glm::lookAt(position, position + tangent, normal);
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));

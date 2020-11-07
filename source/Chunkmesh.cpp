@@ -1,14 +1,20 @@
 #include "Chunkmesh.h"
 #include <algorithm>
 
+Chunkmesh::Chunkmesh(){
+
+}
+
+Chunkmesh::~Chunkmesh(){
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+}
+
 void Chunkmesh::setShader(Shader *shader){
 	this->shader = shader;
 }
 
-void Chunkmesh::setupMesh(){	
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-	
+void Chunkmesh::setupMesh(){
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 

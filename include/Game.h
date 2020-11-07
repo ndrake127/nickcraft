@@ -10,7 +10,6 @@
 #include "Face.h"
 #include "Camera.h"
 #include "World.h"
-#include "TerrainGenerator.h"
 
 const unsigned int SCR_WIDTH = 1680;
 const unsigned int SCR_HEIGHT = 1050;

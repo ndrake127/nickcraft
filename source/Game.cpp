@@ -56,7 +56,7 @@ void Game::load(){
 	shader.load("Shaders/shader.vs", "Shaders/shader.fs");
 	shader.use();
 	
-	projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH/(float)SCR_HEIGHT, 0.1f, 1000.0f);
+	projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH/(float)SCR_HEIGHT, 0.1f, 10000.0f);
 	projectionLoc = glGetUniformLocation(shader.getID(), "projection");
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 	
@@ -65,7 +65,8 @@ void Game::load(){
 	manager.loadTexture("textures/atlas.png");
 	manager.setTexture();
 
-	world.init(&face, &shader, glGetUniformLocation(shader.getID(), "model"));
+	world.init(&face, &shader, &camera, glGetUniformLocation(shader.getID(), "model"));
+
 	std::cout << "init done\n";
 }
 
@@ -81,6 +82,7 @@ void Game::update(){
 	// render here
 	shader.use();
 	camera.update();
+	world.update();
 	world.draw();
 
 	glfwSwapBuffers(window);
@@ -112,6 +114,10 @@ void Game::keyEvent(GLFWwindow *window, int key, int scancode, int action, int m
 				break;
 			case GLFW_KEY_C:
 				camera.set(DOWN);
+				break;
+			case GLFW_KEY_LEFT_SHIFT:
+				camera.sprint();
+				break;
 		}
 	}
 }
