@@ -2,7 +2,8 @@
 #include <algorithm>
 
 Chunkmesh::Chunkmesh(){
-
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);	
 }
 
 Chunkmesh::~Chunkmesh(){
@@ -14,10 +15,16 @@ void Chunkmesh::setShader(Shader *shader){
 	this->shader = shader;
 }
 
-void Chunkmesh::setupMesh(){
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
+void Chunkmesh::resetMesh(){
+	if(!vertices.empty()) vertices.clear();
 
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(face), NULL, GL_STATIC_DRAW);
+}
+
+void Chunkmesh::setupMesh(){
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
@@ -29,10 +36,8 @@ void Chunkmesh::setupMesh(){
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(2, 1, GL_BYTE, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, id));
         glEnableVertexAttribArray(2);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
 }
+
 
 void Chunkmesh::pushFace(vertex *vertices, unsigned char id){
 	face temp;
@@ -49,9 +54,6 @@ void Chunkmesh::sort(){
 
 void Chunkmesh::draw() const {
 	glBindVertexArray(VAO);
-	unsigned int rendered = 0;
-
 	glDrawArrays(GL_TRIANGLES, 0, vertices.size()*6);
-	
 	glBindVertexArray(0);
 }

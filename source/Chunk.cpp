@@ -8,9 +8,10 @@ Chunk::Chunk(){
 	face = nullptr;
 	shader = nullptr;
 	world = nullptr;
-	mesh = nullptr;
 	modelLoc = 0;
 
+	x = 0;
+	z = 0;
 	setChunkPos(0, 0);
 	blocks = 0;
 }
@@ -20,7 +21,6 @@ Chunk::Chunk(int x, int z, Face *face, Shader *shader, World *world, int modelLo
 	this->shader = shader;
 	this->world = world;
 	this->modelLoc = modelLoc;
-	mesh = nullptr;
 
 	setChunkPos(x, z);
 	std::cout << x << ' ' << z << '\n';
@@ -28,7 +28,6 @@ Chunk::Chunk(int x, int z, Face *face, Shader *shader, World *world, int modelLo
 }
 
 Chunk::~Chunk(){
-	if(mesh != nullptr) delete mesh;
 }
 
 void Chunk::generate(TerrainGenerator *generator){
@@ -41,6 +40,8 @@ void Chunk::generate(TerrainGenerator *generator){
 	}
 
 	generator->generateChunk(this);
+
+	loaded = true;
 }
 
 
@@ -109,7 +110,6 @@ void Chunk::save(){
 
 bool Chunk::load(){
 	if(loaded) return true;
-	loaded = true;
 
 	std::string path = "./world/chunk" + std::to_string(x) + '-' + std::to_string(z);
 	std::ifstream file;
@@ -215,12 +215,11 @@ void Chunk::calculateVisible(){
 void Chunk::makeChunkmesh(){
 	if(!dirty) return;
 
-	std::cout << "Meshing...\n";
-
-	if(mesh != nullptr) delete mesh;
-	mesh = new Chunkmesh;
+	//std::cout << "Meshing...\n";
 
 	calculateVisible();
+
+	mesh.resetMesh();
 
 	for(int x = 0; x < WIDTH; x++){
 		for(int y = 0; y < HEIGHT; y++){
@@ -233,42 +232,43 @@ void Chunk::makeChunkmesh(){
 
 				if(list[x][y][z] & 256){
 					face->getVertices(WEST, position, temp);
-					mesh->pushFace(temp, list[x][y][z]&255);
+					mesh.pushFace(temp, list[x][y][z]&255);
 				}
 				if(list[x][y][z] & 512){
 					face->getVertices(EAST, position, temp);
-					mesh->pushFace(temp, list[x][y][z]&255);
+					mesh.pushFace(temp, list[x][y][z]&255);
 				}
 				if(list[x][y][z] & 1024){
 					face->getVertices(BLOCKDOWN, position, temp);
-					mesh->pushFace(temp, list[x][y][z]&255);
+					mesh.pushFace(temp, list[x][y][z]&255);
 				}
 				if(list[x][y][z] & 2048){
 					face->getVertices(BLOCKUP, position, temp);
 					if((list[x][y][z]&255) == 1){
-						mesh->pushFace(temp, 0);
+						mesh.pushFace(temp, 0);
 					}else{
-						mesh->pushFace(temp, list[x][y][z]&255);
+						mesh.pushFace(temp, list[x][y][z]&255);
 					}
 				}
 				if(list[x][y][z] & 4096){
 					face->getVertices(NORTH, position, temp);
-					mesh->pushFace(temp, list[x][y][z]&255);
+					mesh.pushFace(temp, list[x][y][z]&255);
 				}
 				if(list[x][y][z] & 8192){
 					face->getVertices(SOUTH, position, temp);
-					mesh->pushFace(temp, list[x][y][z]&255);
+					mesh.pushFace(temp, list[x][y][z]&255);
 				}
 			}
 		}
 	}
 
-	save();
-	this->dirty = false;
-	mesh->setupMesh();
+	meshed = false;	
+	mesh.setupMesh();
+	meshed = true;
+	dirty = false;
 }
 
 void Chunk::draw(){
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-	mesh->draw();
+	mesh.draw();
 }

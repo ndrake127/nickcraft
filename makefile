@@ -4,7 +4,7 @@ LDIR = ./lib
 SDIR = ./source
 
 CC = g++
-CFLAGS = -g -std=c++11 -I$(IDIR) -L$(LDIR)
+CFLAGS = -g -O0 -std=c++11 -I$(IDIR) -L$(LDIR)
 
 LIBS = -lglfw3 -lGL -lX11 -lpthread -lXrandr -lXi -ldl
 

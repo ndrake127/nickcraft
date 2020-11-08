@@ -71,10 +71,10 @@ void Game::load(){
 }
 
 void Game::update(){
-	currentFrame = glfwGetTime();
-	deltaTime = currentFrame - lastFrame;
-	lastFrame = currentFrame;
-	std::cout << std::setprecision(4) << 1.0f/deltaTime << '\n';
+	currentTick = glfwGetTime();
+	deltaTime = currentTick - lastTick;
+	lastTick = currentTick;
+	//std::cout << (int)(1.0f/deltaTime) << '\n';
 
 	glClearColor(0.45f, 0.74f, 0.8f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -82,11 +82,21 @@ void Game::update(){
 	// render here
 	shader.use();
 	camera.update();
-	world.update();
-	world.draw();
 
-	glfwSwapBuffers(window);
-	glfwPollEvents();
+	currentFrame = glfwGetTime();
+	deltaDrawTime = currentFrame - lastFrame;
+	if(1.0f/deltaDrawTime <= 144.0f){
+		std::cout << "\n\n" << "Draw FPS: " << (float)(1.0f/deltaDrawTime) << "\n\n";
+		
+		world.draw();
+		lastFrame = currentFrame;
+		
+		glfwSwapBuffers(window);
+	}
+
+	world.update();
+
+	glfwPollEvents();	
 }
 
 void Game::keyEvent(GLFWwindow *window, int key, int scancode, int action, int mods){

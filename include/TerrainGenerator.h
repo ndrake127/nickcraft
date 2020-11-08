@@ -14,14 +14,16 @@ class TerrainGenerator{
 	private:
 		FastNoiseLite *noise;
 
+		float GetNoise(Chunk *chunk, int x, int y, int z);
 		float GetNoise(Chunk *chunk, int x, int z);
+
 		void generateBase(Chunk *chunk);
-		void generateWater(Chunk *chunk);
-		void generateWaterBed(Chunk *chunk);
-	
+		void generateBlocks(Chunk *chunk);	
 		void clampContinent(float &val);
 
 		World *world;
+
+		int waterLevel = 64;
 };
 
 #endif

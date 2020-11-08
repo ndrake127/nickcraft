@@ -16,7 +16,7 @@ void Camera::init(const glm::vec3 &pos, const int &viewLoc, float *deltaTime){
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
 	this->deltaTime = deltaTime;
-	speed = 25.0f;
+	speed = 50.0f;
 
 	pitch = 0.0f;
 	yaw = 0.0f;
@@ -98,7 +98,7 @@ void Camera::update(){
 	position += direction.y*normal;
 	position += direction.z*tangent;
 
-	//std::cout << std::setprecision(3) << position.x << ' ' << position.y << ' ' << position.z << '\n';
+	std::cout << std::setprecision(3) << position.x << ' ' << position.y << ' ' << position.z << '\n';
 
 	view = glm::lookAt(position, position + tangent, normal);
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));

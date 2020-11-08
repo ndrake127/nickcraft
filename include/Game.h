@@ -45,6 +45,10 @@ class Game{
 		bool close;
 
 		float deltaTime;
+		float currentTick;
+		float lastTick;
+
+		float deltaDrawTime;
 		float currentFrame;
 		float lastFrame;
 };

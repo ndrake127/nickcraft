@@ -8,6 +8,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <vector>
+#include <queue>
 
 class Chunk;
 class Face;
@@ -39,6 +40,8 @@ class World{
 		
 		std::vector<std::vector<Chunk*> > loadedChunks;
 		int radius;
+
+		std::queue<Chunk*> toLoad;
 
 		int calculateChunkCoordinate(int coord) const;
 };

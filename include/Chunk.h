@@ -9,6 +9,7 @@
 
 #include "ResourceManager.h"
 #include "Face.h"
+#include "Chunkmesh.h"
 
 #include <sstream>
 #include <fstream>
@@ -16,11 +17,10 @@
 
 const unsigned int WIDTH = 16;
 const unsigned int LENGTH = 16;
-const unsigned int HEIGHT = 128;
+const unsigned int HEIGHT = 256;
 
 class World;
 class TerrainGenerator;
-class Chunkmesh;
 
 class Chunk{
 	public:
@@ -48,6 +48,7 @@ class Chunk{
 		int x, z;
 
 		bool loaded = false;
+		bool meshed = false;
 		bool dirty = true;
 	private:
 		std::string path;
@@ -57,7 +58,7 @@ class Chunk{
 		glm::mat4 model = glm::mat4(1.0f);
 		int modelLoc;
 		
-		Chunkmesh *mesh;
+		Chunkmesh mesh;
 
 		Face *face;
 		Shader *shader;
