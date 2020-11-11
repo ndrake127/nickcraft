@@ -14,5 +14,5 @@ void main(){
 	cTex.y += 15 - floor((id+(1.0f/32.0f))/16.0f);
 	cTex /= 16.0f;	
 	
-	FragColor = texture(tex, cTex);
+	FragColor = vec4(vec3(texture(tex, cTex)), 0.5);
 }

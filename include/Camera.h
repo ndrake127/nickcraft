@@ -18,8 +18,12 @@ class Camera{
 		void set(Direction dir);
 		void rotate(double x, double y);
 
+		int getX() const;
+		int getZ() const;
+
 		void update();
-		
+
+		void sprint();
 	private:
 		glm::mat4 view;
 		int viewLoc;
@@ -28,6 +32,7 @@ class Camera{
 		
 		float *deltaTime;
 		float speed;
+		bool fast = false;
 
 		glm::vec3 tangent, normal, binormal, position;
 

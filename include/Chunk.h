@@ -20,33 +20,39 @@ const unsigned int LENGTH = 16;
 const unsigned int HEIGHT = 256;
 
 class World;
+class TerrainGenerator;
 
 class Chunk{
 	public:
 		Chunk();
-		Chunk(int x, int z);
+		Chunk(int x, int z, Face *face, Shader *shader, World *world, int modelLoc);
+		~Chunk();
 
-		void init(Face *face, Shader *shader, World *world, int modelLoc);
-		
 		void setChunkPos(int x, int z);
 		const int & getX() const;
 		const int & getZ() const;
+		
 		unsigned char getBlock(int x, int y, int z) const;
+		void setBlock(int x, int y, int z, unsigned char id);
 
-		void generate();
-		void load(std::string path);
+		void generate(TerrainGenerator *generator);
+		bool load();
 		void save();
 
 		void calculateVisible();
 		void makeChunkmesh();
 
 		void draw();
-	private:
-		std::string path;
-		bool dirty = true;
-
+	
 		unsigned short list[WIDTH][HEIGHT][LENGTH];	
 		int x, z;
+
+		bool loaded = false;
+		bool meshed = false;
+		bool dirty = true;
+	private:
+		std::string path;
+
 		int blocks;
 
 		glm::mat4 model = glm::mat4(1.0f);

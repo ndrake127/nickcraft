@@ -56,7 +56,7 @@ void Game::load(){
 	shader.load("Shaders/shader.vs", "Shaders/shader.fs");
 	shader.use();
 	
-	projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH/(float)SCR_HEIGHT, 0.1f, 1000.0f);
+	projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH/(float)SCR_HEIGHT, 0.1f, 10000.0f);
 	projectionLoc = glGetUniformLocation(shader.getID(), "projection");
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 	
@@ -65,15 +65,16 @@ void Game::load(){
 	manager.loadTexture("textures/atlas.png");
 	manager.setTexture();
 
-	world.init(&face, &shader, glGetUniformLocation(shader.getID(), "model"));
+	world.init(&face, &shader, &camera, glGetUniformLocation(shader.getID(), "model"));
+
 	std::cout << "init done\n";
 }
 
 void Game::update(){
-	currentFrame = glfwGetTime();
-	deltaTime = currentFrame - lastFrame;
-	lastFrame = currentFrame;
-	std::cout << std::setprecision(4) << 1.0f/deltaTime << '\n';
+	currentTick = glfwGetTime();
+	deltaTime = currentTick - lastTick;
+	lastTick = currentTick;
+	//std::cout << (int)(1.0f/deltaTime) << '\n';
 
 	glClearColor(0.45f, 0.74f, 0.8f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -81,10 +82,21 @@ void Game::update(){
 	// render here
 	shader.use();
 	camera.update();
-	world.draw();
 
-	glfwSwapBuffers(window);
-	glfwPollEvents();
+	currentFrame = glfwGetTime();
+	deltaDrawTime = currentFrame - lastFrame;
+	if(1.0f/deltaDrawTime <= 144.0f){
+		std::cout << "\n\n" << "Draw FPS: " << (float)(1.0f/deltaDrawTime) << "\n\n";
+		
+		world.draw();
+		lastFrame = currentFrame;
+		
+		glfwSwapBuffers(window);
+	}
+
+	world.update();
+
+	glfwPollEvents();	
 }
 
 void Game::keyEvent(GLFWwindow *window, int key, int scancode, int action, int mods){
@@ -112,6 +124,10 @@ void Game::keyEvent(GLFWwindow *window, int key, int scancode, int action, int m
 				break;
 			case GLFW_KEY_C:
 				camera.set(DOWN);
+				break;
+			case GLFW_KEY_LEFT_SHIFT:
+				camera.sprint();
+				break;
 		}
 	}
 }

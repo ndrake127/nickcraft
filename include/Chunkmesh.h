@@ -23,9 +23,14 @@ struct face{
 
 class Chunkmesh{
 	public:
+		Chunkmesh();
+		~Chunkmesh();
+
 		void setShader(Shader *shader);
 		
+		void resetMesh();
 		void setupMesh();
+		
 		void pushFace(vertex * vertices, unsigned char id);
 		void sort();
 
@@ -36,6 +41,7 @@ class Chunkmesh{
 		Shader *shader;
 		
 		unsigned int VAO, VBO;
+		bool ready = false;
 };
 
 #endif
