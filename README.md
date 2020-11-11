@@ -1,2 +1,0 @@
-# nickcraft
-My Minecraft Clone
