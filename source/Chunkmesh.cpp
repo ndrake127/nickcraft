@@ -30,12 +30,14 @@ void Chunkmesh::setupMesh(){
 
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(face), &vertices[0], GL_STATIC_DRAW);
 
-        glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, sizeof(vertex), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)0);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(1, 2, GL_BYTE, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, textureCoord));
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, textureCoord));
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(2, 1, GL_BYTE, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, id));
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, normal));
         glEnableVertexAttribArray(2);
+        glVertexAttribPointer(3, 1, GL_BYTE, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, id));
+        glEnableVertexAttribArray(3);
 }
 
 

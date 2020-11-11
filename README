@@ -1,0 +1,16 @@
+This is my minecraft clone
+
+
+
+./nickcraft [OPTIONS]
+
+	--texture=	name of directory storing texture atlas
+	--seed=		seed used to generate world
+	--world=	name of directory storing world files
+	--maps= 	number of texture atlases, used to animate blocks
+	--showFPS=	true or false, used to show framerate in console
+
+
+Texture packs should be named and exist in a directory of the same name
+Before the .png extension, there should be a number indicating the order of animation
+This number is 1 for non animated packs, and for each level of animation, it increases by 1 all the way up to the --maps value

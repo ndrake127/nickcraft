@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include <GLFW/glfw3.h>
 #include <iostream>
 #include <iomanip>
 
@@ -7,7 +8,7 @@ void Camera::init(const glm::vec3 &pos, const int &viewLoc, float *deltaTime){
 	
 	view = glm::mat4(1.0f);
 
-	position = glm::vec3(0.0f, 70.0f, 0.0f);
+	position = glm::vec3(0.0f, 80.0f, 0.0f);
 	tangent = glm::vec3(0.0f, 0.0f, -1.0f);
 	normal = glm::vec3(0.0f, 1.0f, 0.0f);
 	binormal = glm::vec3(-1.0f, 0.0f, 0.0f);
@@ -16,7 +17,10 @@ void Camera::init(const glm::vec3 &pos, const int &viewLoc, float *deltaTime){
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
 	this->deltaTime = deltaTime;
+	prev = position;
 	speed = 50.0f;
+	//speed = 10.92f;
+	sprintFactor = 2.0f;
 
 	pitch = 0.0f;
 	yaw = 0.0f;
@@ -92,13 +96,15 @@ void Camera::update(){
 
 	direction = glm::normalize(direction);
 	direction *= speed * *deltaTime;
-	if(fast) direction *= 10;
+	if(fast) direction *= sprintFactor;
+
+	prev = position;
 
 	position -= direction.x*binormal;
 	position += direction.y*normal;
 	position += direction.z*tangent;
 
-	std::cout << std::setprecision(3) << position.x << ' ' << position.y << ' ' << position.z << '\n';
+	//std::cout << "Camera Speed: " << glm::distance(position, prev)/ *deltaTime << '\n';
 
 	view = glm::lookAt(position, position + tangent, normal);
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));

@@ -4,32 +4,50 @@
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 
-#include "Chunk.h"
-#include "ResourceManager.h"
-#include "Shader.h"
-#include "Face.h"
-#include "Camera.h"
-#include "World.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
-const unsigned int SCR_WIDTH = 1680;
-const unsigned int SCR_HEIGHT = 1050;
+#include <string>
+#include <unordered_map>
+
+
+class ResourceManager;
+class Shader;
+class Face;
+class Camera;
+class World;
+
+const unsigned int SCR_WIDTH = 1440;
+const unsigned int SCR_HEIGHT = 900;
+
 
 class Game{
 	public:
+		struct metadata{
+			std::string name;
+			bool transparent;
+			unsigned char faceTextureID[6];
+		};
+		
 		Game();
+		~Game();
 
-		void load();
+		void load(std::string texture, int seed, std::string worldpath, int animationCount, bool showFPS);
 		void update();
 
 		bool shouldClose() const {return close;}
 
 	private:
 		GLFWwindow *window;
-		Shader shader;
-		ResourceManager manager;
-		Camera camera;
-		Face face;
-		World world;
+		Shader *shader;
+		ResourceManager *manager;
+		Camera *camera;
+		Face *face;
+		World *world;
+
+		std::unordered_map<unsigned char, metadata> blockdata;
+		void loadMetadata();
 
 		glm::mat4 projection;
 		unsigned int projectionLoc;
@@ -48,9 +66,12 @@ class Game{
 		float currentTick;
 		float lastTick;
 
+		bool showFPS;
 		float deltaDrawTime;
 		float currentFrame;
 		float lastFrame;
+
+		float animationTime;
 };
 
 #endif

@@ -10,12 +10,19 @@ class TerrainGenerator{
 		TerrainGenerator(World *world);
 		~TerrainGenerator();
 
+		void SetSeed(int seed);
+
 		void generateChunk(Chunk *chunk);	
 	private:
 		FastNoiseLite *noise;
 
+		int seed;
+
 		float GetNoise(Chunk *chunk, int x, int y, int z);
 		float GetNoise(Chunk *chunk, int x, int z);
+
+		float clamp(float val);
+		float step(float val, float threshold);
 
 		void generateBase(Chunk *chunk);
 		void generateBlocks(Chunk *chunk);	
@@ -23,7 +30,7 @@ class TerrainGenerator{
 
 		World *world;
 
-		int waterLevel = 64;
+		int waterLevel = 63;
 };
 
 #endif

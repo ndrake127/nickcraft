@@ -12,8 +12,9 @@
 #include "Shader.h"
 
 struct vertex{
-	char position[3];
-	char textureCoord[2];
+	float position[3];
+	float textureCoord[2];
+	float normal[3];
 	unsigned char id;	
 };
 

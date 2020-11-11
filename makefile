@@ -6,7 +6,7 @@ SDIR = ./source
 CC = g++
 CFLAGS = -g -O0 -std=c++11 -I$(IDIR) -L$(LDIR)
 
-LIBS = -lglfw3 -lGL -lX11 -lpthread -lXrandr -lXi -ldl
+LIBS = -lglfw3 -l:libboost_filesystem.so.1.71.0 -lboost_system -lGL -lX11 -lpthread -lXrandr -lXi -ldl
 
 _DEPS = Game.h TerrainGenerator.h ResourceManager.h Shader.h World.h Chunk.h Chunkmesh.h Face.h Camera.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))

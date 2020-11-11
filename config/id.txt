@@ -1,0 +1,11 @@
+Air: 0
+Grass: 1
+Dirt: 2
+Stone: 3
+Sand: 4
+Gravel: 5
+Planks: 32
+Wood: 33
+Leaves: 34
+Water: 48
+Lava: 49

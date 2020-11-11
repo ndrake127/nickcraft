@@ -25,7 +25,7 @@ class TerrainGenerator;
 class Chunk{
 	public:
 		Chunk();
-		Chunk(int x, int z, Face *face, Shader *shader, World *world, int modelLoc);
+		Chunk(int x, int z, Face *face, Shader *shader, World *world, int modelLoc, std::string worldpath);
 		~Chunk();
 
 		void setChunkPos(int x, int z);
@@ -34,6 +34,7 @@ class Chunk{
 		
 		unsigned char getBlock(int x, int y, int z) const;
 		void setBlock(int x, int y, int z, unsigned char id);
+		bool isTransparent(int x, int y, int z) const;
 
 		void generate(TerrainGenerator *generator);
 		bool load();
@@ -42,7 +43,7 @@ class Chunk{
 		void calculateVisible();
 		void makeChunkmesh();
 
-		void draw();
+		void draw(bool drawTransparent);
 	
 		unsigned short list[WIDTH][HEIGHT][LENGTH];	
 		int x, z;
@@ -58,7 +59,8 @@ class Chunk{
 		glm::mat4 model = glm::mat4(1.0f);
 		int modelLoc;
 		
-		Chunkmesh mesh;
+		Chunkmesh opaqueMesh;
+		Chunkmesh transparentMesh;
 
 		Face *face;
 		Shader *shader;

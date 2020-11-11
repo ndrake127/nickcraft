@@ -31,10 +31,10 @@ class Camera{
 		bool dirArr[6] = {0,0,0,0,0,0};
 		
 		float *deltaTime;
-		float speed;
+		float speed, sprintFactor;
 		bool fast = false;
 
-		glm::vec3 tangent, normal, binormal, position;
+		glm::vec3 tangent, normal, binormal, position, prev;
 
 		float xOffset, yOffset, lastX, lastY;
 		float pitch, yaw;
