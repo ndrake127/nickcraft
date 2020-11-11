@@ -1,7 +1,5 @@
 This is my minecraft clone
 
-
-
 ./nickcraft [OPTIONS]
 
 	--texture=	name of directory storing texture atlas
@@ -14,3 +12,9 @@ This is my minecraft clone
 Texture packs should be named and exist in a directory of the same name
 Before the .png extension, there should be a number indicating the order of animation
 This number is 1 for non animated packs, and for each level of animation, it increases by 1 all the way up to the --maps value
+
+I need to figure out licensing stuff to make this okay to actually make,
+but until then just know I'm using the GLFW for OpenGL, STB Image Loader for loading image data,
+Boost to interact with filesystem in a crossplatform way, and FastNoiseLite for terrain generation.
+I will figure out how to properly credit these extremely useful libraries in a way that
+is considerate of their licenses.
