@@ -17,7 +17,9 @@ This is my minecraft clone
 	--render-distance=	number of chunks to load in one direction, including the chunk the camera is in.
 				a render distance of 16 loads a 31x31 square.
 				
-	--showPos=		true or false, shows the location of the camera in the console when moving when set to true
+	--showPos=		true or false, shows the location of the camera in the console when moving when
+				set to true
+
 
 Texture packs should be named and exist in a directory of the same name
 Before the .png extension, there should be a number indicating the order of animation
