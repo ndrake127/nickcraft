@@ -4,14 +4,14 @@ LDIR = ./lib
 SDIR = ./source
 
 CC = g++
-CFLAGS = -g -O0 -std=c++11 -I$(IDIR) -L$(LDIR)
+CFLAGS = -std=c++11 -I$(IDIR) -L$(LDIR)
 
 LIBS = -lglfw3 -l:libboost_filesystem.so.1.71.0 -lboost_system -lGL -lX11 -lpthread -lXrandr -lXi -ldl
 
-_DEPS = Game.h TerrainGenerator.h ResourceManager.h Shader.h World.h Chunk.h Chunkmesh.h Face.h Camera.h
+_DEPS = Game.h LightManager.h TerrainGenerator.h ResourceManager.h Shader.h World.h Chunk.h Chunkmesh.h Face.h Camera.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o Game.o TerrainGenerator.o ResourceManager.o Shader.o World.o Chunk.o Chunkmesh.o Face.o Camera.o glad.o stb_image.o
+_OBJ = main.o Game.o LightManager.o TerrainGenerator.o ResourceManager.o Shader.o World.o Chunk.o Chunkmesh.o Face.o Camera.o glad.o stb_image.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)

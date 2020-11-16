@@ -7,15 +7,20 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <queue>
 #include <vector>
+#include <map>
 
 #include "Shader.h"
 
+class blueGuy;
+
 struct vertex{
-	float position[3];
-	float textureCoord[2];
-	float normal[3];
-	unsigned char id;	
+	float position[3] = {0.0f, 0.0f, 0.0f};
+	float textureCoord[2] = {0.0f, 0.0f};
+	float normal[3] = {0.0f, 0.0f, 0.0f};
+	unsigned char id = 0;
+	unsigned char lightLevel = 0;
 };
 
 struct face{
@@ -31,8 +36,13 @@ class Chunkmesh{
 		
 		void resetMesh();
 		void setupMesh();
+		void updateMesh();
 		
-		void pushFace(vertex * vertices, unsigned char id);
+		void pushFace(vertex * vertices, unsigned char id, unsigned char lightLevel, int index);
+		void popFace(int index);
+
+		int getIndex();
+
 		void sort();
 
 		void draw() const;
@@ -40,7 +50,8 @@ class Chunkmesh{
 		std::vector<face> vertices;
 	private:
 		Shader *shader;
-		
+	
+		std::queue<int> insertAt;
 		unsigned int VAO, VBO;
 		bool ready = false;
 };

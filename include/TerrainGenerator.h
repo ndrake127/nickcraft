@@ -17,11 +17,13 @@ class TerrainGenerator{
 		FastNoiseLite *noise;
 
 		int seed;
+		int y = 0;
 
 		float GetNoise(Chunk *chunk, int x, int y, int z);
 		float GetNoise(Chunk *chunk, int x, int z);
 
 		float clamp(float val);
+		float hillFilter(float val);
 		float step(float val, float threshold);
 
 		void generateBase(Chunk *chunk);

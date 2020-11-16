@@ -38,6 +38,7 @@ Game::Game(){
 	glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 	glfwSetKeyCallback(window, keyCallback);
 	glfwSetCursorPosCallback(window, mouseCallback);
+	glfwSetMouseButtonCallback(window, mouseButtonCallback);
 	
 	// glad: load all OpenGL function pointers
 	if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
@@ -54,7 +55,6 @@ Game::Game(){
 	
 	// enable face culling for performance reasons
 	glEnable(GL_CULL_FACE);  
-	glFrontFace(GL_CW);  	
 	
 	// enable wireframe, commented out by default
 	//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
@@ -83,6 +83,8 @@ Game::Game(){
 	// keeps track of when to end the game loop in main
 	close = false;
 
+	lightPos = glm::vec3(0.0f, 256.0f, 0.0f);
+
 	// allocating dynamic memory for child objects
 	// pointers used so the Game.h can prototype classes and not explicitly include their headers, makes compilation better
 	shader = new Shader;
@@ -100,7 +102,7 @@ Game::~Game(){
 	delete world;
 }
 
-void Game::load(std::string texture, int seed, std::string worldpath, int animationCount, bool showFPS){
+void Game::load(std::string texture, int seed, std::string worldpath, int animationCount, bool showFPS, int renderDistance, bool showPos){
 	std::string path = "textures/" + texture + '/';
 	path += texture;
 
@@ -108,12 +110,14 @@ void Game::load(std::string texture, int seed, std::string worldpath, int animat
 
 	shader->load("Shaders/shader.vs", "Shaders/shader.fs");
 	shader->use();
-	
+
+	lightPosLoc = glGetUniformLocation(shader->getID(), "lightPos");
+
 	projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH/(float)SCR_HEIGHT, 0.1f, 10000.0f);
 	projectionLoc = glGetUniformLocation(shader->getID(), "projection");
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 	
-	camera->init(glm::vec3(0.0f, 0.0f, -3.0f), glGetUniformLocation(shader->getID(), "view"), &deltaTime);
+	camera->init(glm::vec3(0.0f, 0.0f, -3.0f), glGetUniformLocation(shader->getID(), "view"), glGetUniformLocation(shader->getID(), "lightPos"), &deltaTime, world, showPos);
 	
 	manager->loadTexture(path, animationCount);
 	manager->setTexture();
@@ -124,11 +128,11 @@ void Game::load(std::string texture, int seed, std::string worldpath, int animat
 		boost::filesystem::create_directory(worldpath);
 	}
 
-	world->init(face, shader, camera, glGetUniformLocation(shader->getID(), "model"), worldpath, seed);
+	loadMetadata();
+
+	world->init(this, &lightPos, face, shader, camera, glGetUniformLocation(shader->getID(), "model"), worldpath, seed, renderDistance);
 
 	this->showFPS = showFPS;
-
-	loadMetadata();
 
 	std::cout << "init done\n";
 }
@@ -144,6 +148,7 @@ void Game::loadMetadata(){
 	if(file){
 		unsigned int id;
 		metadata temp;
+		int faceTextureID[6];
 
 		while(std::getline(file, line)){
 			std::stringstream instream(line);
@@ -152,15 +157,30 @@ void Game::loadMetadata(){
 			instream >> id
 				 >> temp.name
 				 >> temp.transparent
-				 >> temp.faceTextureID[0]
-				 >> temp.faceTextureID[1]
-				 >> temp.faceTextureID[2]
-				 >> temp.faceTextureID[3]
-				 >> temp.faceTextureID[4]
-				 >> temp.faceTextureID[5];
-	
-			std::pair<unsigned char, metadata> pair = std::pair<unsigned char, metadata>(id, temp);
-			blockdata.insert(pair);
+				 >> faceTextureID[0]
+				 >> faceTextureID[1]
+				 >> faceTextureID[2]
+				 >> faceTextureID[3]
+				 >> faceTextureID[4]
+				 >> faceTextureID[5];
+			
+			temp.faceTextureID[0] = faceTextureID[0];
+			temp.faceTextureID[1] = faceTextureID[1];
+			temp.faceTextureID[2] = faceTextureID[2];
+			temp.faceTextureID[3] = faceTextureID[3];
+			temp.faceTextureID[4] = faceTextureID[4];
+			temp.faceTextureID[5] = faceTextureID[5];
+
+			blockdata[id] = temp;;
+			std::cout << id << ' '
+				  << blockdata[id].name << ' '
+				  << blockdata[id].transparent << ' '
+				  << (int)blockdata[id].faceTextureID[0] << ' '
+				  << (int)blockdata[id].faceTextureID[1] << ' '
+				  << (int)blockdata[id].faceTextureID[2] << ' '
+				  << (int)blockdata[id].faceTextureID[3] << ' '
+				  << (int)blockdata[id].faceTextureID[4] << ' '
+				  << (int)blockdata[id].faceTextureID[5] << '\n';
 		}
 	}else{
 		exit(0);
@@ -180,14 +200,22 @@ void Game::update(){
 	shader->use();
 	camera->update();
 
-	if(glfwGetTime()-animationTime > 0.15f){
+	// day/night cycle
+	lightPos = glm::rotate(lightPos, glm::radians(3.0f)*deltaTime, glm::normalize(glm::vec3(1.0f, 0.0f, 1.0f)));
+	glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
+	//std::cout << lightPos.x << ' ' << lightPos.y << ' ' << lightPos.z << '\n';
+
+	// switches texture atlas at every specified interval, used to animate blocks
+	if(glfwGetTime()-animationTime > 0.5f){
 		animationTime = glfwGetTime();
 		manager->setTexture();
 	}
-	
+
+	// keeps track of FPS
 	currentFrame = glfwGetTime();
 	deltaDrawTime = currentFrame - lastFrame;
 	
+	// limits fps to 144Hz
 	if(1.0f/deltaDrawTime <= 144.0f){
 		if(showFPS) std::cout << "\n\n" << "Draw FPS: " << (int)(1.0f/deltaDrawTime) << "\n\n";
 		
@@ -197,6 +225,7 @@ void Game::update(){
 		glfwSwapBuffers(window);
 	}
 
+	// updates the world so it will be drawn properly next frame
 	world->update();
 
 	glfwPollEvents();	
@@ -233,10 +262,40 @@ void Game::keyEvent(GLFWwindow *window, int key, int scancode, int action, int m
 				break;
 		}
 	}
+
+	if(action == GLFW_PRESS){
+		switch(key){
+			case GLFW_KEY_1:
+				camera->setBlock(1);
+				break;
+			case GLFW_KEY_2:
+				camera->setBlock(2);
+				break;
+			case GLFW_KEY_3:
+				camera->setBlock(6);
+				break;
+			case GLFW_KEY_4:
+				camera->setBlock(32);
+				break;
+		}
+	}
 }
 
 void Game::mouseEvent(GLFWwindow *window, double x, double y){
 	camera->rotate(x, y);
+}
+
+void Game::mouseButtonEvent(GLFWwindow *window, int button, int action, int mods){
+	if(action == GLFW_PRESS){
+		switch(button){
+			case GLFW_MOUSE_BUTTON_LEFT:
+				camera->rayCast(true);
+				break;
+			case GLFW_MOUSE_BUTTON_RIGHT:
+				camera->rayCast(false);
+				break;
+		}
+	}
 }
 
 void Game::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods){
@@ -247,8 +306,13 @@ void Game::keyCallback(GLFWwindow *window, int key, int scancode, int action, in
 void Game::mouseCallback(GLFWwindow *window, double x, double y){
 	Game* game = reinterpret_cast<Game *>(glfwGetWindowUserPointer(window));
 	if(game) game->mouseEvent(window, x, y);
-
 }
+
+void Game::mouseButtonCallback(GLFWwindow *window, int button, int action, int mods){
+	Game* game = reinterpret_cast<Game *>(glfwGetWindowUserPointer(window));
+	if(game) game->mouseButtonEvent(window, button, action, mods);
+}
+
 void Game::framebufferSizeCallback(GLFWwindow* window, int width, int height){
 	glViewport(0, 0, width, height);
 }

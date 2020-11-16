@@ -10,6 +10,8 @@ int main(int argc, char** argv){
 	std::string world = "nosave";
 	int textureCount = 1;
 	bool showFPS = false;
+	int renderDistance = 16;
+	bool showPos = false;
 
 	if(argc > 1){
 		for(int i = 1; i < argc-1; i+=2){
@@ -23,6 +25,10 @@ int main(int argc, char** argv){
 				textureCount = atoi(argv[i+1]);
 			}else if(strcmp("--showFPS=", argv[i]) == 0){
 				showFPS = (strcmp("true", argv[i+1]) == 0);
+			}else if(strcmp("--render-distance=", argv[i]) == 0){
+				renderDistance = atoi(argv[i+1]);
+			}else if(strcmp("--showPos=", argv[i]) == 0){
+				showPos = (strcmp("true", argv[i+1]) == 0);
 			}
 		}
 	}
@@ -30,10 +36,13 @@ int main(int argc, char** argv){
 	std::cout << "Texture Pack: " << texture << '\n'
 		  << "Texture Count: " << textureCount << '\n'
 		  << "Seed: " << seed << '\n'
-		  << "World: " << world << '\n';
+		  << "World: " << world << '\n'
+		  << "Render Distance: " << renderDistance << '\n'
+		  << "Showing FPS: " << showFPS << '\n'
+		  << "Showing Position: " << showPos << '\n';
 
 	Game game;
-	game.load(texture, seed, world, textureCount, showFPS);
+	game.load(texture, seed, world, textureCount, showFPS, renderDistance, showPos);
 	
 	while(!game.shouldClose()){
 		game.update();	

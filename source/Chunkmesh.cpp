@@ -36,18 +36,54 @@ void Chunkmesh::setupMesh(){
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, normal));
         glEnableVertexAttribArray(2);
-        glVertexAttribPointer(3, 1, GL_BYTE, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, id));
+        glVertexAttribPointer(3, 1, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, id));
         glEnableVertexAttribArray(3);
+        glVertexAttribPointer(4, 1, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, lightLevel));
+        glEnableVertexAttribArray(4);
+
+	ready = true;
 }
 
+void Chunkmesh::updateMesh(){	
+	if(!ready) return;
+	
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-void Chunkmesh::pushFace(vertex *vertices, unsigned char id){
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(face), NULL, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(face), &vertices[0], GL_STATIC_DRAW);
+}
+
+void Chunkmesh::pushFace(vertex *vertices, unsigned char id, unsigned char lightLevel, int index){
 	face temp;
 	for(int i = 0; i < 6; i++){
+		vertices[i].lightLevel = lightLevel;
 		vertices[i].id = id;
 		temp.vertices[i] = vertices[i];
 	}
-	this->vertices.push_back(temp);
+	this->vertices[index] = temp;
+	updateMesh();
+}
+
+void Chunkmesh::popFace(int index){
+	face empty;
+	vertices[index] = empty;
+	insertAt.push(index);
+	updateMesh();
+}
+
+int Chunkmesh::getIndex(){
+	int index;
+	
+	if(insertAt.empty()){
+		index = vertices.size();
+		vertices.resize(vertices.size()+1);
+	}else{
+		index = insertAt.front();
+		insertAt.pop();
+	}
+
+	return index;
 }
 
 void Chunkmesh::sort(){

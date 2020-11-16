@@ -11,9 +11,13 @@
 
 enum Direction { UP, DOWN, LEFT, RIGHT, FRONT, BACK };
 
+class World;
+
 class Camera{
 	public:
-		void init(const glm::vec3 &pos, const int &viewLoc, float *deltaTime);
+		Camera();
+
+		void init(const glm::vec3 &pos, const int &viewLoc, const int &positionLoc, float *deltaTime, World *world, bool showPos);
 	
 		void set(Direction dir);
 		void rotate(double x, double y);
@@ -22,9 +26,14 @@ class Camera{
 		int getZ() const;
 
 		void update();
+		void rayCast(bool breaking) const;
 
 		void sprint();
+		
+		void setBlock(unsigned char id);
 	private:
+		World *world;
+
 		glm::mat4 view;
 		int viewLoc;
 		
@@ -32,13 +41,17 @@ class Camera{
 		
 		float *deltaTime;
 		float speed, sprintFactor;
-		bool fast = false;
+		bool fast;
 
 		glm::vec3 tangent, normal, binormal, position, prev;
+		int positionLoc;
+		bool showPos;
 
 		float xOffset, yOffset, lastX, lastY;
 		float pitch, yaw;
 		bool setRot;
+
+		unsigned char m_id;
 };
 
 #endif

@@ -7,10 +7,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 
 #include <string>
-#include <unordered_map>
-
 
 class ResourceManager;
 class Shader;
@@ -27,13 +26,14 @@ class Game{
 		struct metadata{
 			std::string name;
 			bool transparent;
-			unsigned char faceTextureID[6];
+			unsigned int faceTextureID[6];
 		};
+		metadata blockdata[256];
 		
 		Game();
 		~Game();
 
-		void load(std::string texture, int seed, std::string worldpath, int animationCount, bool showFPS);
+		void load(std::string texture, int seed, std::string worldpath, int animationCount, bool showFPS, int renderDistance, bool showPos);
 		void update();
 
 		bool shouldClose() const {return close;}
@@ -46,7 +46,6 @@ class Game{
 		Face *face;
 		World *world;
 
-		std::unordered_map<unsigned char, metadata> blockdata;
 		void loadMetadata();
 
 		glm::mat4 projection;
@@ -57,6 +56,9 @@ class Game{
 		
 		static void mouseCallback(GLFWwindow *window, double x, double y);
 		void mouseEvent(GLFWwindow *window, double x, double y);
+
+		static void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
+		void mouseButtonEvent(GLFWwindow *window, int button, int action, int mods);
 
 		static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
@@ -72,6 +74,9 @@ class Game{
 		float lastFrame;
 
 		float animationTime;
+
+		glm::vec3 lightPos;
+		int lightPosLoc;
 };
 
 #endif
