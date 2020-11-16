@@ -1,5 +1,11 @@
-This is my minecraft clone
+This is my minecraft inspired voxel game.
 
+This is my first serious attempt at developing a game and I'm coming at this with very little experience
+in managing large scale projects and no experience in game design, so my code is obviously going to be
+subpar.
+
+Development pace fluctuates depending on work and school schedules, but honestly this is more important
+and interesting to me than work and school, so it often takes priority.
 
 
 ./nickcraft [OPTIONS]
