@@ -30,3 +30,7 @@ and interesting to me than work and school, so it often takes priority.
 Texture packs should be named and exist in a directory of the same name
 Before the .png extension, there should be a number indicating the order of animation
 This number is 1 for non animated packs, and for each level of animation, it increases by 1 all the way up to the --maps value
+
+Update:
+
+Development fell off a bit due to life and other stuff, I'd like to get this working on windows at some point.
