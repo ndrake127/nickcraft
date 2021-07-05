@@ -1,5 +1,3 @@
-This is my minecraft inspired voxel game.
-
 This is my first serious attempt at developing a game and I'm coming at this with very little experience
 in managing large scale projects and no experience in game design, so my code is obviously going to be
 subpar.
@@ -31,6 +29,11 @@ Texture packs should be named and exist in a directory of the same name
 Before the .png extension, there should be a number indicating the order of animation
 This number is 1 for non animated packs, and for each level of animation, it increases by 1 all the way up to the --maps value
 
-Update:
+To-do:
 
-Development fell off a bit due to life and other stuff, I'd like to get this working on windows at some point.
+Get this to compile on Windows so I can consolidate dependencies.
+Scrap lighting (for now, terrible performance.)
+Fix chunk loading bug that occurs when moving diagonally across chunk borders at high speed.
+Batch rendering
+Implement abstract GameObject from which chunks inherit.
+Decouple OpenGL calls from game logic and object data.
